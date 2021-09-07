@@ -12,4 +12,5 @@ def isPrimeSimple(a):
     return True
 
 
-print(isPrimeSimple(23))
+if __name__ == '__main__':
+    print(isPrimeSimple(23))
