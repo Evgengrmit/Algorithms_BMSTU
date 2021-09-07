@@ -1,44 +1,26 @@
-# def Next_permutation(iterable):
-#     # pool = tuple(iterable)
-#     n = len(iterable)
-#     if n <= 1:
-#         return False
-#     for i in reversed(range(n - 1)):
-#         if iterable[i] < iterable[i + 1]:
-#             for j in reversed(range(i+1, n)):
-#                 if iterable[i] < iterable[j]:
-#                     iterable[i], iterable[j] = iterable[j], iterable[i]
-#                     iterable[i+1:] = iterable[i+1:n:-1]
-#                     return True
-#     else:
-#         return False
-#
-def next_permutation(a):
-    """Generate the lexicographically next permutation inplace.
+def next_permutation(iterable):
+    if n <= 1:
+        return False
+    for it in reversed(range(len(iterable) - 1)):
+        if iterable[it] < iterable[it + 1]:
+            for j in reversed(range(it + 1, n)):
+                if iterable[it] < iterable[j]:
+                    iterable[it], iterable[j] = iterable[j], iterable[it]
+                    iterable[it + 1:] = reversed(iterable[it + 1:])
+                    return True
+    else:
+        return False
 
-    https://en.wikipedia.org/wiki/Permutation#Generation_in_lexicographic_order
-    Return false if there is no next permutation.
-    """
-    # Find the largest index i such that a[i] < a[i + 1]. If no such
-    # index exists, the permutation is the last permutation
-    for i in reversed(range(len(a) - 1)):
-        if a[i] < a[i + 1]:
-            break  # found
-    else:  # no break: not found
-        return False  # no next permutation
 
-    # Find the largest index j greater than i such that a[i] < a[j]
-    j = next(j for j in reversed(range(i + 1, len(a))) if a[i] < a[j])
+def all_permutations(number):
+    massive = [el for el in range(1, number + 1)]
+    while True:
+        yield tuple(massive)
+        if not next_permutation(massive):
+            break
 
-    # Swap the value of a[i] with that of a[j]
-    a[i], a[j] = a[j], a[i]
 
-    # Reverse sequence from a[i + 1] up to and including the final element a[n]
-    a[i + 1:] = reversed(a[i + 1:])
-    return True
-massive = [1, 2,3,4]
-while True:
-    print(massive)
-    if not next_permutation(massive):
-        break
-
+if __name__ == '__main__':
+    n = int(input())
+    for i in all_permutations(n):
+        print(i)
