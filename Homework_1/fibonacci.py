@@ -14,7 +14,7 @@ class MatrixFibonacci:
         return t
 
     def __imul__(self, other):
-        self.P = (self*other).P
+        self.P = (self * other).P
         return self
 
     def __pow__(self, power, modulo=None):
@@ -28,12 +28,11 @@ class MatrixFibonacci:
         return result
 
 
+def getFibonacci(number):
+    p = MatrixFibonacci()
+    return (p ** number).P[1][1]
+
+
 if __name__ == '__main__':
     n = int(input())
-    p = MatrixFibonacci()
-    if n == 0:
-        print(0, end=' ')
-    elif n == 1 or n == 2:
-        print(1, end=' ')
-    else:
-        print((p ** n).P[1][1], end=' ')
+    print(getFibonacci(n))

@@ -1,7 +1,7 @@
 from math import sqrt
 
 
-def isPrimeSimple(a):
+def isSimple(a):
     if a == 1 or a == 2:
         return True
     if a % 2 == 0:
@@ -13,4 +13,4 @@ def isPrimeSimple(a):
 
 
 if __name__ == '__main__':
-    print(isPrimeSimple(23))
+    print(isSimple(23))
