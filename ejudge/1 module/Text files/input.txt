@@ -1,0 +1,60 @@
+
+
+
+pop
+popa
+print
+push
+
+set_size 5
+
+popa
+
+pop
+
+
+printa
+print
+print
+
+print
+pop
+
+
+push 1 2 3
+push
+
+
+push 1
+push 2
+push 3
+push 4
+push 5
+
+print
+pop
+pop
+pop
+push 6
+push 7
+push 8
+push 9
+push 23 25
+print
+pop
+pop
+pop
+pop
+pop
+pop
+pop
+pop
+pop
+pop
+set_size 100
+pop
+pop
+pop
+pop
+pop
+pop
