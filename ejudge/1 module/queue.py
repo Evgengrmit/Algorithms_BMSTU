@@ -2,6 +2,10 @@ import sys
 import re
 
 
+class QueueException(Exception):
+    pass
+
+
 class Queue:
     def __init__(self, n):
         self.capacity_ = n
@@ -12,14 +16,14 @@ class Queue:
 
     def push(self, x):
         if self.n_of_elements_ + 1 > self.capacity_:
-            raise Exception('overflow')
+            raise QueueException('overflow')
         self.tail_ = (self.tail_ + 1) % self.capacity_
         self.array_[self.tail_] = x
         self.n_of_elements_ += 1
 
     def pop(self):
         if self.n_of_elements_ == 0:
-            raise Exception('underflow')
+            raise QueueException('underflow')
         popped_element = self.array_[self.head_]
         self.head_ = (self.head_ + 1) % self.capacity_
         self.n_of_elements_ -= 1
@@ -27,7 +31,7 @@ class Queue:
 
     def print_queue(self):
         if self.n_of_elements_ == 0:
-            return 'empty'
+            raise QueueException('empty')
         else:
             if self.head_ <= self.tail_:
                 return ' '.join(map(str, self.array_[self.head_:self.tail_ + 1]))
@@ -40,39 +44,31 @@ class Queue:
 
 def get_command(line_):
     if re.match(re.compile('(set_size\s\d+$)|(push\s\S+$)'), line_):
-        value_ = line_[line_.find(' ') + 1:]
-        line_ = line_[:line_.find(' ')]
-        return [line_, value_]
+        return line_.split()
     elif re.match(re.compile('pop|print'), line_):
         return [line_, None]
-
-    raise Exception('error')
+    raise QueueException('error')
 
 
 if __name__ == '__main__':
     my_queue = None
-    set_cap = False
 
-    name_of_input, name_of_output = sys.argv[1], sys.argv[2]
-
-    with open(name_of_input, 'r') as input_file:
-        with open(name_of_output, 'w') as output_file:
+    with open(sys.argv[1], 'r') as input_file:
+        with open(sys.argv[2], 'w') as output_file:
 
             for line in input_file:
                 if line == '\n':
                     continue
                 try:
                     if line[-1] == '\n':
-                        line = line[:line.find('\n')]
+                        line = line[:-1]
                     command, mean = get_command(line)
-                    if command is None:
-                        raise Exception('error')
-                    elif command == 'set_size':
-                        if not set_cap:
+
+                    if command == 'set_size':
+                        if my_queue is None:
                             my_queue = Queue(int(mean))
-                            set_cap = True
                         else:
-                            raise Exception('error')
+                            raise QueueException('error')
                     elif command == 'push':
                         my_queue.push(mean)
                     elif command == 'pop':
@@ -80,9 +76,8 @@ if __name__ == '__main__':
                     elif command == 'print':
                         print(my_queue.print_queue(), file=output_file)
                     else:
-                        raise Exception('error')
+                        raise QueueException('error')
+                except QueueException as qe:
+                    print(qe, file=output_file)
                 except Exception as e:
-                    if str(e) not in ['underflow', 'overflow', 'error']:
-                        print('error', file=output_file)
-                    else:
-                        print(e, file=output_file)
+                    print('error', file=output_file)
