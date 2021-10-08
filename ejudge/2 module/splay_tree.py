@@ -26,6 +26,9 @@ class SplayTree:
         def is_left_child(self):
             return self.parent.left_child == self
 
+        def is_right_child(self):
+            return self.parent.right_child == self
+
         def __str__(self):
             if self.parent is None:
                 return f'[{self.key} {self.value}]'
@@ -61,6 +64,7 @@ class SplayTree:
             y.left.parent = x
 
         y.parent = x.parent
+
         if x.parent is None:  # узел node_x - корень
             self.__root = y
         elif x == x.parent.left:  # узел node_x - левый ребенок
@@ -71,17 +75,37 @@ class SplayTree:
         y.left = x
         x.parent = y
 
-    def __zig(self, node):
-
-
     def __splay(self, node=__SplayNode()):
         if node is None:
             return
+
         while node.has_parent():
             if node.parent == self.__root:  # узел - ребенок корня
-                if node.is_left_child():
+                if node.is_left_child():  # zig
                     self.__right_rotation(node.parent)
-                else:
+                else:  # zag
                     self.__left_rotation(node.parent)
             else:
+                parent = node.parent  # родитель
+                grand_parent = node.parent.parent  # дед
+
+                if node.is_left_child() and parent.is_left_child():  # zigzig
+                    self.__right_rotation(grand_parent)
+                    self.__right_rotation(parent)
+                elif node.is_right_child() and parent.is_right_child():  # zagzag
+                    self.__left_rotation(grand_parent)
+                    self.__left_rotation(parent)
+                elif node.is_left_child() and parent.is_right_child():  # zigzag
+                    self.__right_rotation(parent)
+                    self.__left_rotation(grand_parent)
+                elif node.is_right_child() and parent.is_left_child():  # zagzig
+                    self.__left_rotation(parent)
+                    self.__right_rotation(grand_parent)
+
+    def add(self, key, value):
+
+        if self.__root is None:
+            self.__root = self.__SplayNode(key,value)
+            return
+        temp = self.__root
 
