@@ -202,7 +202,6 @@ class SplayTree:
         self.__splay(max_node)
         return f'{max_node.key} {max_node.value}'
 
-
     @staticmethod
     def __min(root):
         temp_node = root
