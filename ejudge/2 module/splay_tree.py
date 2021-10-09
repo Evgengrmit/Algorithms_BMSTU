@@ -186,7 +186,6 @@ class SplayTree:
             raise SplayTreeException('error')
 
         self.__root.value = value
-        return True
 
     @staticmethod
     def __max(root):
