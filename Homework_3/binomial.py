@@ -17,5 +17,5 @@ def simple_binomial(k, n):
 
 
 now = time.time()
-print(simple_binomial(500, 10000))
+print(simple_binomial(5000, 10000))
 print(time.time() - now)

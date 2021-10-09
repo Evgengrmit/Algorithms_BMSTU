@@ -36,12 +36,25 @@ class LinkedList:
             node = node.next
         print()
 
+    def remove_by_index(self,i):
+        if self.head_node is None:
+            return
+        cnt = 0
+        curr = self.head_node
+        while curr:
+            if cnt == i:
+                return curr.data
+            else:
+                curr = curr.next
+                cnt += 1
+        return
+
 
 if __name__ == '__main__':
     my_list = LinkedList()
-    for i in range(100):
+    for i in range(1,100,2):
         my_list.addNode(i)
 
     my_list.print_list()
-    my_list.reverse()
+    print(my_list.remove_by_index(0))
     my_list.print_list()

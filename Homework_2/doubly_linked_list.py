@@ -35,6 +35,38 @@ class DoublyLinkedList:
             node = node.prev
         print()
 
+    def remove(self,el):
+        if self._head is None or self._tail is None:
+            return
+        if self._head.data == el:
+            if self._head.next is None:
+                self._head = None
+                self._tail = None
+                return
+            else:
+                self._head.next.prev = self._head.prev
+                self._head = self._head.next
+                return
+        curr = self._head
+        while curr.next is not None:
+            if curr.data == el:
+                curr.prev.next = curr.next
+                curr.next.prev = curr.prev
+                return
+            else:
+                curr = curr.next
+        else:
+            if curr.data == el:
+                # if self._tail.prev is None:
+                #     self._head = None
+                #     self._tail = None
+                # else:
+                    self._tail.prev.next = self._tail.next
+                    self._tail = self._tail.prev
+                    return
+        raise  Exception
+
+
 
 class Stack(DoublyLinkedList):
     def __init__(self):
@@ -77,34 +109,12 @@ class Queue(DoublyLinkedList):
 
 
 if __name__ == '__main__':
-    print('Stack:')
-    my_stack = Stack()
-    for i in range(3):
-        my_stack.push(i)
-    my_stack.print_list()
-    print(my_stack.pop())
-    print(my_stack.pop())
-    print(my_stack.pop())
-    try:
-        my_stack.pop()
-    except IndexError as e:
-        print(e)
-    my_stack.push(5)
-    my_stack.push(6)
-    my_stack.print_list()
 
-    print('Queue:')
-    my_queue = Queue()
-    for i in range(3):
-        my_queue.push(i)
-    my_queue.print_list()
-    print(my_queue.pop())
-    print(my_queue.pop())
-    print(my_queue.pop())
-    try:
-        my_queue.pop()
-    except IndexError as e:
-        print(e)
-    my_queue.push(5)
-    my_queue.push(6)
-    my_queue.print_list()
+    my_list = DoublyLinkedList()
+    for i in range(1):
+        my_list.add(i)
+
+    my_list.print_list()
+    my_list.remove(5)
+    my_list.print_list()
+    print(my_list._tail.data)
