@@ -2,7 +2,7 @@ import re
 import sys
 from collections import deque
 
-sys.setrecursionlimit(10800000)
+sys.setrecursionlimit(10600000)
 
 
 class SplayTreeException(Exception):
@@ -26,13 +26,6 @@ class SplayTree:
 
         def has_left_child(self):
             return self.left_child is not None
-
-        def remove_children(self):
-            if self.has_right_child():
-                self.right_child = None
-
-            if self.has_left_child():
-                self.left_child = None
 
         def is_left_child(self):
             return self.parent.left_child == self
