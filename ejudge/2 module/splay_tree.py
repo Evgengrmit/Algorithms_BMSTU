@@ -155,7 +155,6 @@ class SplayTree:
 
         added_node.parent = parent_node
         self.__splay(added_node)
-        return True
 
     def search(self, key):
         if key is None:
@@ -235,33 +234,32 @@ class SplayTree:
                 new_root.right_child.parent = new_root
 
     @staticmethod
-    def __print_node(node):
-        if not node:
-            return '_'
-        else:
-            return str(node)
+    def __print_node(node_):
+        return str(node_) if node_ is not None else '_'
 
     @staticmethod
     def __print_line(q_, n_, d_):
+        d_ -= 1  # чтобы на последней итерации просто выводить и не засорять deque
         for i in range(len(q_)):
             if n_ < d_:
                 curr_node = q_.popleft()
                 if not curr_node:
-                    q_.append(False)
-                    q_.append(False)
+                    q_.append(None)
+                    q_.append(None)
                 else:
-                    q_.append(curr_node.left_child if curr_node.has_left_child() else False)
-                    q_.append(curr_node.right_child if curr_node.has_right_child() else False)
+                    q_.append(curr_node.left_child)
+                    q_.append(curr_node.right_child)
                 yield SplayTree.__print_node(curr_node)
             else:
                 yield SplayTree.__print_node(q_.popleft())
 
     def print(self):
         depth = SplayTree.depth(self.__root)
-        queue = deque()
-        queue.append(self.__root if self.__root is not None else False)
         if depth == 0:
             print('_')
+            return
+        queue = deque()
+        queue.append(self.__root)
         for number_of_layer in range(depth):
             print(' '.join(SplayTree.__print_line(queue, number_of_layer, depth)))
 
