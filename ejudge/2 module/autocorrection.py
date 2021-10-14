@@ -1,7 +1,14 @@
 import sys
 
+sys.stdin.reconfigure(encoding='utf-8')
+sys.stdout.reconfigure(encoding='utf-8')
+
 
 class Trie:
+    """
+    Space complexity:
+    O(n*m) узлов, где n - число слов, m - максимальная длина слова в словаре
+    """
     class __TrieNode:
         def __init__(self):
             self.children = {}
@@ -10,7 +17,15 @@ class Trie:
     def __init__(self):
         self.__root = Trie.__TrieNode()
 
-    def insert(self, word_):
+    def insert(self, word_) -> None:
+        """
+        Вставка в префиксное дерево:
+        сложность по времени O(n), где n - длина искомого слова.
+        Быстрее осуществить нельзя, так как необходимо проверить,
+        есть ли символ в нужной ветви и если нет, то надо добавить символ в префиксное дерево.
+        :param word_:
+        :return:
+        """
         node = self.__root
 
         for symbol in word_:
@@ -19,15 +34,28 @@ class Trie:
             node = node.children[symbol]
 
         node.final_node = True
+        # конец слова, нужен для того, чтобы избежать ситуации, когда, например,
+        # в словаре solutions, а ищем solution
 
-    def search_matches(self, word_):
+    def search_matches(self, word_) -> bool:
+        """
+        Поиск слова в префиксном дереве:
+        сложность по времени O(n), где n - длина искомого слова.
+        Быстрее осуществить нельзя, так как необходимо проверить,
+        что каждый символ есть в префиксном дереве.
+        сложность по памяти O(1) - дополнительная память в процессе поиска слова не выделяется.
+        :param word_:
+        :return bool:
+        """
         node = self.__root
         for symbol in word_:
             if symbol not in node.children:
                 return False
             else:
                 node = node.children[symbol]
-        return node.final_node
+        return node.final_node  # проверяем является ли последний символ концом
+
+    # для того, чтобы избежать ситуацию, когда, например, в словаре solutions, а ищем solution
 
     @staticmethod
     def __search_similar_recursive(node_, prefix_, symbol_, prev_symbol_, word_, previous_row_, pre_previous_row_,
@@ -62,7 +90,7 @@ class Trie:
                 Trie.__search_similar_recursive(child_, prefix_ + symbol_, symbol_, prev_symbol_, word_, current_row,
                                                 previous_row_, results_)
 
-    def search_similar(self, word_):
+    def search_similar(self, word_) -> []:
         current_row = range(len(word_) + 1)
         results = []
         for symbol, child in self.__root.children.items():
@@ -70,22 +98,37 @@ class Trie:
         return sorted(results)
 
 
-if __name__ == '__main__':
+def main():
     my_trie = Trie()
-    size_of_dict = int(input())
-    for _ in range(size_of_dict):
+    size_of_dictionary = int(input())
+
+    for _ in range(size_of_dictionary):
         word = input().lower()
         my_trie.insert(word)
+
+    print_end = False
 
     for line in sys.stdin:
         if line == '\n':
             continue
         line = line[:-1]
+
+        # чтобы в конце не было '\n'
+        if print_end:
+            print()
+        else:
+            print_end = True
+
         if my_trie.search_matches(line.lower()):
-            print(f'{line} - ok')
+            print(f'{line} - ok', end='')
         else:
             found_words = my_trie.search_similar(line.lower())
+
             if found_words:
-                print(f'{line} ->', ', '.join(found_words))
+                print(f'{line} ->', ', '.join(found_words), end='')
             else:
-                print(f'{line} -?')
+                print(f'{line} -?', end='')
+
+
+if __name__ == '__main__':
+    main()
