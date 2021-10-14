@@ -6,9 +6,10 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 class Trie:
     """
-    Space complexity:
-    O(n*m) узлов, где n - число слов, m - максимальная длина слова в словаре
+    Space complexity of trie:
+    O(number) number - число узлов в префиксном дереве
     """
+
     class __TrieNode:
         def __init__(self):
             self.children = {}
@@ -20,9 +21,11 @@ class Trie:
     def insert(self, word_) -> None:
         """
         Вставка в префиксное дерево:
-        сложность по времени O(n), где n - длина искомого слова.
+        сложность по времени O(length), где length - длина искомого слова.
         Быстрее осуществить нельзя, так как необходимо проверить,
         есть ли символ в нужной ветви и если нет, то надо добавить символ в префиксное дерево.
+        сложность по памяти O(1) - проход по всем узлам для вставки нового
+        узла не требует дополнительного выделения памяти. Для нового узла выделяется константный объем памяти
         :param word_:
         :return:
         """
@@ -40,10 +43,11 @@ class Trie:
     def search_matches(self, word_) -> bool:
         """
         Поиск слова в префиксном дереве:
-        сложность по времени O(n), где n - длина искомого слова.
-        Быстрее осуществить нельзя, так как необходимо проверить,
-        что каждый символ есть в префиксном дереве.
-        сложность по памяти O(1) - дополнительная память в процессе поиска слова не выделяется.
+        сложность по времени O(length), где length - длина искомого слова. Быстрее осуществить нельзя, так как необходимо
+        проверить, что каждый символ есть в префиксном дереве.
+
+        сложность по  памяти O(1) - при проходе по ветви для определения наличия слова
+        дополнительная память не выделяется.
         :param word_:
         :return bool:
         """
@@ -54,12 +58,44 @@ class Trie:
             else:
                 node = node.children[symbol]
         return node.final_node  # проверяем является ли последний символ концом
+        # для того, чтобы избежать ситуацию, когда, например, в словаре solutions, а ищем solution
 
-    # для того, чтобы избежать ситуацию, когда, например, в словаре solutions, а ищем solution
+    def search_similar(self, word_) -> []:
+        """
+        Для поиска расстояния Дамерау-Левенштейна создается таблица M*N, где M и N - длины сравниваемых слов
+        В алгоритме для проверки расстояния нужно для каждого слова в словаре составить таблицу.
+        Это O(size*max_length^2) по времени и O(max_length^2) по памяти,
+        где size - размер словаря, max_length - максимальная длина слова
+
+        Поиск похожих слов:
+        Сложность по времени:
+        Для слова, проверяется очередной символ из ветви дерева. То есть мы для каждого узла в Trie создаем по крайней
+        мере одну строку в таблице, таким образом сложность по времени
+        O(number*length),
+        где number - число узлов в префиксном дереве, length - длина проверяемого слова.
+        Что значительно лучше чем просто перебор.
+
+        Сложность по памяти:
+        Для обхода каждого узла требуется рекурсивный вызов, следовательно заполняется стек вызовов.
+        Это O(number) вызовов функции, где number - число узлов. Для проверки каждого узла требуется
+        3 строки матрицы длины length - длина проверяемого слова. Это
+        O(length).
+        Таким образом, сложность по памяти O(number*length)
+        :param word_:
+        :return list:
+        """
+        current_row = range(len(word_) + 1)
+        results = []
+        for symbol, child in self.__root.children.items():
+            Trie.__search_similar_recursive(child, symbol, symbol, None, word_, current_row, None, results)
+        return sorted(results)
 
     @staticmethod
     def __search_similar_recursive(node_, prefix_, symbol_, prev_symbol_, word_, previous_row_, pre_previous_row_,
                                    results_):
+        """
+        рекурсивный вызов
+        """
         if node_ is None:
             return
         columns = len(word_) + 1
@@ -89,13 +125,6 @@ class Trie:
             for symbol_, child_ in node_.children.items():
                 Trie.__search_similar_recursive(child_, prefix_ + symbol_, symbol_, prev_symbol_, word_, current_row,
                                                 previous_row_, results_)
-
-    def search_similar(self, word_) -> []:
-        current_row = range(len(word_) + 1)
-        results = []
-        for symbol, child in self.__root.children.items():
-            Trie.__search_similar_recursive(child, symbol, symbol, None, word_, current_row, None, results)
-        return sorted(results)
 
 
 def main():
