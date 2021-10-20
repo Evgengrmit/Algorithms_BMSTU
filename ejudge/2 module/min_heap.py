@@ -181,9 +181,8 @@ class Command:
 def parse_command(line_):
     if re.match(re.compile(r'(min|max|print|extract)$'), line_):
         return Command(line_)
-    elif re.match(re.compile(r'(delete\s-?\d+$)|(search\s-?\d+$)'), line_):
-        return Command(*line_.split())
-    elif re.match(re.compile(r'(add\s-?\d+\s\S+$)|(set\s-?\d+\s\S+$)'), line_):
+    elif re.match(re.compile(r'(delete\s-?\d+$)|(search\s-?\d+$)'), line_) \
+            or re.match(re.compile(r'(add\s-?\d+\s\S+$)|(set\s-?\d+\s\S+$)'), line_):
         return Command(*line_.split())
 
     raise MinHeapException('error')

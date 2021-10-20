@@ -57,16 +57,13 @@ class SplayTree:
 
         if root.key == key:
             return root
-        elif root.key > key:
-            if root.has_left_child():
-                return SplayTree.__find(root.left_child, key)
-            else:
-                return root
-        else:
-            if root.has_right_child():
-                return SplayTree.__find(root.right_child, key)
-            else:
-                return root
+        elif root.key > key and root.has_left_child():
+            return SplayTree.__find(root.left_child, key)
+
+        elif root.key < key and root.has_right_child():
+            return SplayTree.__find(root.right_child, key)
+
+        return root
 
     def __right_rotation(self, x=__SplayNode()):
         y = x.left_child
@@ -276,9 +273,8 @@ class Command:
 def parse_command(line_):
     if re.match(re.compile(r'(min|max|print)$'), line_):
         return Command(line_)
-    elif re.match(re.compile(r'(delete\s-?\d+$)|(search\s-?\d+$)'), line_):
-        return Command(*line_.split())
-    elif re.match(re.compile(r'(add\s-?\d+\s\S+$)|(set\s-?\d+\s\S+$)'), line_):
+    elif re.match(re.compile(r'(delete\s-?\d+$)|(search\s-?\d+$)'), line_) or re.match(
+            re.compile(r'(add\s-?\d+\s\S+$)|(set\s-?\d+\s\S+$)'), line_):
         return Command(*line_.split())
 
     raise SplayTreeException('error')
