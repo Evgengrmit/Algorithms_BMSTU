@@ -39,6 +39,17 @@ class SplayTree:
             else:
                 return f'[{self.key} {self.value} {self.parent.key}]'
 
+    class __PrintVertex:
+        def __init__(self, node, separator_size):
+            self.node = node
+            self.separator_size = separator_size
+
+        def __str__(self):
+            if self.node is None:
+                return ' '.join(['_'] * self.separator_size)
+            else:
+                return str(self.node)
+
     def __init__(self):
         self.__root = None
 
@@ -231,34 +242,34 @@ class SplayTree:
                 new_root.right_child.parent = new_root
 
     @staticmethod
-    def __print_node(node_):
-        return str(node_) if node_ is not None else '_'
-
-    @staticmethod
-    def __print_line(q_, n_, d_):
-        d_ -= 1  # чтобы на последней итерации просто выводить и не засорять deque
-        for i in range(len(q_)):
-            if n_ < d_:
-                curr_node = q_.popleft()
-                if not curr_node:
-                    q_.append(None)
-                    q_.append(None)
-                else:
-                    q_.append(curr_node.left_child)
-                    q_.append(curr_node.right_child)
-                yield SplayTree.__print_node(curr_node)
+    def __print_line(q_, l_):
+        elements_in_layer = 2 ** l_
+        i = 0
+        while i < elements_in_layer:
+            curr_vertex = q_.popleft()
+            yield str(curr_vertex)
+            if curr_vertex.node is None:
+                i += curr_vertex.separator_size
+                curr_vertex.separator_size *= 2
+                q_.append(curr_vertex)
             else:
-                yield SplayTree.__print_node(q_.popleft())
+                i += 1
+                q_.append(
+                    SplayTree.__PrintVertex(curr_vertex.node.left_child,
+                                            0 if curr_vertex.node.has_left_child() else 1))
+                q_.append(
+                    SplayTree.__PrintVertex(curr_vertex.node.right_child,
+                                            0 if curr_vertex.node.has_right_child() else 1))
 
     def print(self):
-        depth = SplayTree.depth(self.__root)
-        if depth == 0:
+        if self.__root is None:
             print('_')
             return
+        depth = SplayTree.depth(self.__root)
         queue = deque()
-        queue.append(self.__root)
-        for number_of_layer in range(depth):
-            print(' '.join(SplayTree.__print_line(queue, number_of_layer, depth)))
+        queue.append(SplayTree.__PrintVertex(self.__root, 0))
+        for layer in range(depth):
+            print(' '.join(SplayTree.__print_line(queue, layer)))
 
 
 class Command:
