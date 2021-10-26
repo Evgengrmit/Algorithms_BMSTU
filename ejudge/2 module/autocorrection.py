@@ -2,7 +2,6 @@ import sys
 
 
 class Trie:
-
     class __TrieNode:
         def __init__(self):
             self.children = {}
@@ -19,8 +18,6 @@ class Trie:
         есть ли символ в нужной ветви и если нет, то надо добавить символ в префиксное дерево.
         сложность по памяти O(length) где  length - длина вставляемого слова.
         Создается length объектов (то есть слово длины length => length узлов)
-        :param word_:
-        :return:
         """
         node = self.__root
 
@@ -41,8 +38,6 @@ class Trie:
         что каждый символ слова есть в префиксном дереве.
         сложность по  памяти O(1) - при проходе по ветви для определения наличия слова
         дополнительная память не выделяется.
-        :param word_:
-        :return bool:
         """
         node = self.__root
         for symbol in word_:
@@ -53,44 +48,39 @@ class Trie:
         return node.final_node  # проверяем является ли последний символ концом
         # для того, чтобы избежать ситуацию, когда, например, в словаре solutions, а ищем solution
 
+    # Алгоритмы грубой силы:
+    #   Для поиска расстояния Дамерау-Левенштейна создается таблица M*N, где M - длина слова, переданное для поиска и
+    #   N - максимальная длина слова из словаря.
+    #   В алгоритме для проверки расстояния нужно для каждого слова в словаре составить таблицу.
+    #   Это O(size*M*N) по времени и O(M*N) по памяти,
+    #   где size - размер словаря, M - длина слова, переданное для поиска и N - максимальная длина слова из словаря.
+    #
     def search_similar(self, word_) -> []:
         """
-        Для поиска расстояния Дамерау-Левенштейна создается таблица M*N, где M и N - длины сравниваемых слов
-        В алгоритме для проверки расстояния нужно для каждого слова в словаре составить таблицу.
-        Это O(size*max_length^2) по времени и O(max_length^2) по памяти,
-        где size - размер словаря, max_length - максимальная длина слова
-
         Поиск похожих слов:
         Сложность по времени:
         Для слова, проверяется очередной символ из ветви дерева. То есть мы для каждого узла в Trie создаем по крайней
         мере одну строку в таблице, таким образом сложность по времени
-        O(number*length),
-        где number - число узлов в префиксном дереве, length - длина проверяемого слова.
-        Что значительно лучше чем просто перебор.
+        O(number*length), где number - число узлов в префиксном дереве, length - длина проверяемого слова.
 
         Сложность по памяти:
         Для обхода каждого узла требуется рекурсивный вызов, следовательно заполняется стек вызовов.
         Это O(number) вызовов функции, где number - число узлов. Для проверки каждого узла требуется
-        3 строки матрицы длины length - длина проверяемого слова. Это
-        O(length).
+        3 строки матрицы длины length - длина проверяемого слова. Это O(length).
         Таким образом, сложность по памяти O(number*length)
-        :param word_:
-        :return list:
         """
         current_row = range(len(word_) + 1)
         results = []
-        for symbol, child in self.__root.children.items():
-            Trie.__search_similar_recursive(child, symbol, symbol, None, word_, current_row, None, results)
+        for symbol, children_items in self.__root.children.items():
+            Trie.__search_similar_recursive(children_items, symbol, symbol, None, word_, current_row, None, results)
         return sorted(results)
 
     @staticmethod
     def __search_similar_recursive(node_, prefix_, symbol_, prev_symbol_, word_, previous_row_, pre_previous_row_,
                                    results_):
-        """
-        рекурсивный вызов
-        """
         if node_ is None:
             return
+
         columns = len(word_) + 1
         current_row = [previous_row_[0] + 1]
 
@@ -113,10 +103,10 @@ class Trie:
             results_.append(prefix_)
 
         if min(current_row) <= 1:
-            prev_symbol_ = symbol_
+            prev_sym = symbol_
 
-            for symbol_, child_ in node_.children.items():
-                Trie.__search_similar_recursive(child_, prefix_ + symbol_, symbol_, prev_symbol_, word_, current_row,
+            for sym, child_ in node_.children.items():
+                Trie.__search_similar_recursive(child_, prefix_ + sym, sym, prev_sym, word_, current_row,
                                                 previous_row_, results_)
 
 
@@ -140,11 +130,11 @@ def main():
             print()
         else:
             print_end = True
-
-        if my_trie.search_matches(line.lower()):
+        lower_line = line.lower()
+        if my_trie.search_matches(lower_line):
             print(f'{line} - ok', end='')
         else:
-            found_words = my_trie.search_similar(line.lower())
+            found_words = my_trie.search_similar(lower_line)
 
             if found_words:
                 print(f'{line} ->', ', '.join(found_words), end='')

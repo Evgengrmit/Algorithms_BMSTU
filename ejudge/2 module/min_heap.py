@@ -99,8 +99,8 @@ class MinHeap:
 
         if size > 1 and idx < size - 1:
             del self.__indexes[key_to_del]
-            self.__indexes[self.__array[size - 1].key] = idx
-            self.__array[idx] = self.__array[size - 1]
+            self.__indexes[self.__array[-1].key] = idx
+            self.__array[idx] = self.__array[-1]
             self.__array.pop()
             parent_idx = MinHeap.__HeapVertex.get_parent_index(idx)
             if not idx or self.__array[idx].key > self.__array[parent_idx].key:
@@ -117,22 +117,22 @@ class MinHeap:
 
         first_vertex = self.__array[0]
         self.delete(first_vertex.key)
-        return f'{first_vertex.key} {first_vertex.value}'
+        return first_vertex.key, first_vertex.value
 
     def search(self, key_to_search):
         if key_to_search is None:
             raise MinHeapException('error')
 
         if key_to_search not in self.__indexes:
-            return '0'
+            return ()
         found_idx = self.__indexes[key_to_search]
         found_vertex = self.__array[found_idx]
-        return f'1 {found_idx} {found_vertex.value}'
+        return found_idx, found_vertex.value
 
     def minimum(self):
         if not self.__array:
             raise MinHeapException('error')
-        return f'{self.__array[0].key} 0 {self.__array[0].value}'
+        return self.__array[0].key, self.__array[0].value
 
     def maximum(self):
         if not self.__array:
@@ -145,7 +145,7 @@ class MinHeap:
             if self.__array[i].key > max_vertex.key:
                 max_vertex, max_idx = self.__array[i], i
 
-        return f'{max_vertex.key} {max_idx} {max_vertex.value}'
+        return max_vertex.key, max_idx, max_vertex.value
 
     def __print_line(self, level):
         start = 2 ** level - 1
@@ -203,13 +203,20 @@ def main():
             elif command.name == 'delete':
                 my_min_heap.delete(command.key)
             elif command.name == 'search':
-                print(my_min_heap.search(command.key))
+                result = my_min_heap.search(command.key)
+                if result:
+                    print(f'1 {result[0]} {result[1]}')
+                else:
+                    print('0')
             elif command.name == 'min':
-                print(my_min_heap.minimum())
+                key, value = my_min_heap.minimum()
+                print(f'{key} 0 {value}')
             elif command.name == 'max':
-                print(my_min_heap.maximum())
+                key, index, value = my_min_heap.maximum()
+                print(f'{key} {index} {value}')
             elif command.name == 'extract':
-                print(my_min_heap.extract())
+                key, value = my_min_heap.extract()
+                print(f'{key} {value}')
             elif command.name == 'print':
                 my_min_heap.print()
         except MinHeapException as mhe:
