@@ -172,9 +172,9 @@ class SplayTree:
         self.__splay(searched_node)
 
         if not searched_node or searched_node.key != key:
-            return '0'
+            return None
 
-        return f'1 {self.__root.value}'
+        return self.__root.value
 
     def set(self, key, value):
         if key is None or value is None:
@@ -199,7 +199,7 @@ class SplayTree:
             raise SplayTreeException('error')
         max_node = SplayTree.__max(self.__root)
         self.__splay(max_node)
-        return f'{max_node.key} {max_node.value}'
+        return max_node.key, max_node.value
 
     @staticmethod
     def __min(root):
@@ -214,7 +214,7 @@ class SplayTree:
 
         min_node = SplayTree.__min(self.__root)
         self.__splay(min_node)
-        return f'{min_node.key} {min_node.value}'
+        return min_node.key, min_node.value
 
     def delete(self, key):
         if key is None:
@@ -242,7 +242,7 @@ class SplayTree:
                 new_root.right_child.parent = new_root
 
     @staticmethod
-    def __print_line(q_, l_):
+    def __get_vertex(q_, l_):
         elements_in_layer = 2 ** l_
         i = 0
         while i < elements_in_layer:
@@ -261,15 +261,18 @@ class SplayTree:
                     SplayTree.__PrintVertex(curr_vertex.node.right_child,
                                             0 if curr_vertex.node.has_right_child() else 1))
 
-    def print(self):
+    @staticmethod
+    def __get_line(q, d):
+        for layer in range(d):
+            yield ' '.join(SplayTree.__get_vertex(q, layer))
+
+    def __str__(self):
         if self.__root is None:
-            print('_')
-            return
+            return '_'
         depth = SplayTree.depth(self.__root)
         queue = deque()
         queue.append(SplayTree.__PrintVertex(self.__root, 0))
-        for layer in range(depth):
-            print(' '.join(SplayTree.__print_line(queue, layer)))
+        return '\n'.join(SplayTree.__get_line(queue, depth))
 
 
 class Command:
@@ -306,13 +309,19 @@ def main():
             elif command.name == 'delete':
                 my_splay_tree.delete(command.key)
             elif command.name == 'search':
-                print(my_splay_tree.search(command.key))
+                value = my_splay_tree.search(command.key)
+                if value:
+                    print(f'1 {value}')
+                else:
+                    print('0')
             elif command.name == 'min':
-                print(my_splay_tree.minimum())
+                key, value = my_splay_tree.minimum()
+                print(f'{key} {value}')
             elif command.name == 'max':
-                print(my_splay_tree.maximum())
+                key, value = my_splay_tree.maximum()
+                print(f'{key} {value}')
             elif command.name == 'print':
-                my_splay_tree.print()
+                print(my_splay_tree)
         except SplayTreeException as ste:
             print(ste)
 

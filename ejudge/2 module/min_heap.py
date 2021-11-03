@@ -124,7 +124,7 @@ class MinHeap:
             raise MinHeapException('error')
 
         if key_to_search not in self.__indexes:
-            return ()
+            return None
         found_idx = self.__indexes[key_to_search]
         found_vertex = self.__array[found_idx]
         return found_idx, found_vertex.value
@@ -147,7 +147,7 @@ class MinHeap:
 
         return max_vertex.key, max_idx, max_vertex.value
 
-    def __print_line(self, level):
+    def __get_vertex(self, level):
         start = 2 ** level - 1
         end = 2 ** (level + 1) - 1
         for vertex in self.__array[start:end]:
@@ -158,15 +158,17 @@ class MinHeap:
             for _ in range(end - len(self.__array)):
                 yield '_'
 
-    def print(self):
-        if not self.__array:
-            print('_')
-            return
-        root = self.__array[0]
-        print(f'[{root.key} {root.value}]')
+    def __get_line(self):
+        yield f'[{self.__array[0].key} {self.__array[0].value}]'
         height = MinHeap.height(self.__array) + 1
         for i in range(1, height - 1):
-            print(' '.join(self.__print_line(i)))
+            yield ' '.join(self.__get_vertex(i))
+
+    def __str__(self):
+        if not self.__array:
+            return '_'
+
+        return '\n'.join(self.__get_line())
 
 
 class Command:
@@ -218,7 +220,7 @@ def main():
                 key, value = my_min_heap.extract()
                 print(f'{key} {value}')
             elif command.name == 'print':
-                my_min_heap.print()
+                print(my_min_heap)
         except MinHeapException as mhe:
             print(mhe)
 
